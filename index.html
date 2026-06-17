@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hamburger Catcher Arcade</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Canvas for drawing the game -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Glassmorphism HUD (Top Panel) -->
+        <div id="hud" class="hidden">
+            <div class="hud-item" id="hud-score-container">
+                <span class="label">SCORE</span>
+                <span id="score-val" class="value">0</span>
+            </div>
+            <div class="hud-item" id="hud-coins-container">
+                <span class="label">COINS</span>
+                <span id="coins-val" class="value">0 🪙</span>
+            </div>
+            <div class="hud-item" id="hud-basket-container">
+                <span class="label">BASKET</span>
+                <span id="basket-val" class="value">Wood 🧺</span>
+            </div>
+            <div class="hud-item" id="hud-health-container">
+                <span class="label">HEALTH</span>
+                <div id="health-bar-bg">
+                    <div id="health-bar-fill"></div>
+                </div>
+            </div>
+            <div class="hud-item" id="hud-wave-container">
+                <span class="label">WAVE</span>
+                <span id="wave-val" class="value">1</span>
+            </div>
+        </div>
+
+        <!-- Start/Title Screen -->
+        <div id="start-screen" class="overlay">
+            <div class="arcade-card">
+                <h1 class="game-title">HAMBURGER<br><span class="highlight">CATCHER</span></h1>
+                <p class="tagline">Catch the good burgers, avoid the traps!</p>
+                
+                <div class="instructions-card">
+                    <h3>How to Play:</h3>
+                    <ul>
+                        <li>🍔 Catch <strong>Regular Burgers</strong> (+10 pts, +5 coins)</li>
+                        <li>❌ Avoid <strong>Green Burgers</strong> 🟩🍔 and <strong>Green Potatoes</strong> 🟩🥔 (-health)</li>
+                        <li>🐔 Avoid <strong>Chickens</strong> 🐔 and <strong>Cows</strong> 🐄 (breaks health!)</li>
+                        <li>🪨 Avoid <strong>Rocks</strong> on the ground (trips you!)</li>
+                        <li>⚠️ <strong>Big Burgers</strong> break Wood Baskets! Upgrade your basket to catch them safely!</li>
+                    </ul>
+                    <p class="controls-desc"><strong>Controls:</strong> Arrow keys / WASD to Run. Space / Up key to Jump. (Touch controls on mobile!)</p>
+                </div>
+
+                <button id="start-btn" class="arcade-btn green">INSERT COIN & PLAY</button>
+            </div>
+        </div>
+
+        <!-- Shop / Upgrade Overlay -->
+        <div id="shop-screen" class="overlay hidden">
+            <div class="arcade-card shop-card">
+                <div class="shop-header">
+                    <h2>ARCADE SHOP</h2>
+                    <div id="shop-coins-display">Coins: <span id="shop-coins-val">0</span> 🪙</div>
+                </div>
+                
+                <div class="shop-items">
+                    <!-- Upgrade Card: Basket -->
+                    <div class="shop-item" id="item-basket">
+                        <div class="item-icon">🧺</div>
+                        <div class="item-details">
+                            <h3>Basket Upgrade</h3>
+                            <p id="basket-desc">Upgrade basket material to catch larger burgers.</p>
+                            <span class="basket-level-badge" id="basket-level-badge">Wood (Lv. 1)</span>
+                        </div>
+                        <button id="buy-basket-btn" class="arcade-btn shop-btn">Upgrade: 30 🪙</button>
+                    </div>
+
+                    <!-- Upgrade Card: Run Speed -->
+                    <div class="shop-item" id="item-speed">
+                        <div class="item-icon">👟</div>
+                        <div class="item-details">
+                            <h3>Running Shoes</h3>
+                            <p>Increases running speed to move faster across the screen.</p>
+                            <span class="speed-level-badge" id="speed-level-badge">Normal Speed</span>
+                        </div>
+                        <button id="buy-speed-btn" class="arcade-btn shop-btn">Upgrade: 20 🪙</button>
+                    </div>
+
+                    <!-- Upgrade Card: Helmet -->
+                    <div class="shop-item" id="item-helmet">
+                        <div class="item-icon">🪖</div>
+                        <div class="item-details">
+                            <h3>Safety Helmet</h3>
+                            <p>Reduces stun duration when tripping on rocks.</p>
+                            <span class="helmet-level-badge" id="helmet-level-badge">No Helmet</span>
+                        </div>
+                        <button id="buy-helmet-btn" class="arcade-btn shop-btn">Buy: 25 🪙</button>
+                    </div>
+                </div>
+
+                <div class="shop-actions">
+                    <button id="close-shop-btn" class="arcade-btn red">BACK TO WAVES</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="overlay hidden">
+            <div class="arcade-card">
+                <h1 class="game-over-title">GAME OVER</h1>
+                <p class="final-score-desc">You caught burgers worth:</p>
+                <div class="score-display">
+                    <span id="final-score-val">0</span> PTS
+                </div>
+                <div class="score-display coins-display">
+                    <span id="final-coins-val">0</span> 🪙 Collected
+                </div>
+                
+                <button id="restart-btn" class="arcade-btn green">TRY AGAIN</button>
+            </div>
+        </div>
+
+        <!-- Responsive Mobile Touch Controls -->
+        <div id="mobile-controls" class="hidden">
+            <div class="left-controls">
+                <button id="btn-left" class="touch-btn">◀</button>
+                <button id="btn-right" class="touch-btn">▶</button>
+            </div>
+            <div class="right-controls">
+                <button id="btn-jump" class="touch-btn">JUMP</button>
+            </div>
+            <div class="top-controls">
+                <button id="btn-shop-toggle" class="touch-btn">🛒 SHOP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Game script -->
+    <script src="game.js"></script>
+</body>
+</html>

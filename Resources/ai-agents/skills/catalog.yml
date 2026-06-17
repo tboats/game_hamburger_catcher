@@ -1,0 +1,247 @@
+version: 1
+library: skills
+description: Reusable skill building blocks used by workflows and agents.
+items:
+- id: para-kit
+  name: PARA Kit
+  kernel_min: 1.6.4
+  kernel_max: 1.x
+  entrypoint: para-kit/SKILL.md
+  description: PARA workspace structure reference — schema, layout, kernel governance
+    quick reference, and intelligence routing.
+  tags:
+  - para
+  - structure
+  - schema
+  - governance
+- id: formatting
+  name: Formatting Tables & Diagrams
+  kernel_min: 1.4.0
+  kernel_max: 1.x
+  entrypoint: formatting/SKILL.md
+  description: Templates and patterns for tables, diagrams, trees, and visual markdown
+    — loaded on demand when formatting artifacts.
+  tags:
+  - formatting
+  - tables
+  - diagrams
+  - markdown
+- id: page-map
+  name: Page Map
+  kernel_min: 1.7.0
+  kernel_max: 1.x
+  entrypoint: page-map/SKILL.md
+  description: AI Agent skill to read, manage, and manipulate website visual structure
+    using PAGE_MAP.md and BLUEPRINT.md.
+  tags:
+  - website
+  - layout
+  - visual
+  - structure
+- id: para-skill
+  name: PARA Skill Governance
+  kernel_min: 1.7.6
+  kernel_max: 1.x
+  entrypoint: para-skill/SKILL.md
+  description: Governance skill for creating and validating PARA skills via Co-Author
+    engine. Sidecar companion to /para-skill workflow.
+  tags:
+  - governance
+  - skills
+  - co-author
+  - quality
+- id: plan
+  name: Plan Templates
+  kernel_min: 1.7.8
+  kernel_max: 1.x
+  entrypoint: plan/SKILL.md
+  description: Sidecar data for /plan workflow — Detail Plan and Roadmap templates
+    loaded just-in-time. Plan naming convention clarified (v1.0.1).
+  tags:
+  - plan
+  - sidecar
+  - templates
+  - token-optimization
+- id: docs
+  name: Docs Templates
+  kernel_min: 1.7.8
+  kernel_max: 1.x
+  entrypoint: docs/SKILL.md
+  description: Sidecar data for /docs workflow — Architecture, CLI, Deployment, Changelog,
+    Strategy templates loaded just-in-time. Reduces docs.md by ~160 lines.
+  tags:
+  - docs
+  - sidecar
+  - templates
+  - token-optimization
+- id: brainstorm
+  name: Brainstorm Templates
+  kernel_min: 1.7.12
+  kernel_max: 1.x
+  entrypoint: brainstorm/SKILL.md
+  description: Sidecar data for /brainstorm workflow — Decision and Research document
+    templates loaded just-in-time. Extract Paradigm governance (v1.7.12).
+  tags:
+  - brainstorm
+  - sidecar
+  - templates
+  - token-optimization
+  - extract-paradigm
+- id: harness
+  name: Harness Guards
+  kernel_min: 1.7.15
+  kernel_max: 1.x
+  entrypoint: harness/SKILL.md
+  description: Centralized guard catalog and auto-scan protocol for generating
+    context-aware safety guards across plans, workflows, and artifacts.
+  tags:
+  - harness
+  - guards
+  - safety
+  - sidecar
+- id: write
+  name: Write Templates
+  kernel_min: 1.7.14
+  kernel_max: 1.x
+  entrypoint: write/SKILL.md
+  description: Sidecar data for /write workflow — content type templates (ebook,
+    blog, tutorial, guide, paper, social, email) and writing rules loaded just-in-time.
+  tags:
+  - write
+  - sidecar
+  - templates
+  - token-optimization
+  - content
+- id: spec
+  name: Spec Templates
+  kernel_min: 1.7.16
+  kernel_max: 1.x
+  entrypoint: spec/SKILL.md
+  description: Governance skill for /spec workflow — spec templates, assumption surfacing
+    rules, boundary definitions, and quality checklists.
+  tags:
+  - spec
+  - sidecar
+  - templates
+  - governance
+  - quality
+- id: qa
+  name: QA Review Templates
+  kernel_min: 1.8.5
+  kernel_max: 1.x
+  entrypoint: qa/SKILL.md
+  description: "Sidecar data for /qa workflow — Red Team personas..."
+  tags:
+  - qa
+  - sidecar
+  - red-team
+  - review
+  - quality
+- id: tdd
+  name: TDD Guidelines
+  kernel_min: 1.8.7
+  kernel_max: 1.x
+  entrypoint: tdd/SKILL.md
+  description: Strict Test-Driven Development workflow rules, anti-patterns, and the Red-Green-Refactor cycle.
+  tags:
+  - tdd
+  - testing
+  - governance
+  - rules
+- id: logs
+  name: Logs Audit Extensions
+  kernel_min: 1.8.7
+  kernel_max: 1.x
+  entrypoint: logs/SKILL.md
+  description: Sidecar data for /logs workflow — conditional audit templates loaded just-in-time when plan methodology requires specialized compliance checks.
+  tags:
+  - logs
+  - audit
+  - sidecar
+  - compliance
+- id: html-renderer
+  name: HTML Renderer
+  kernel_min: 1.8.9
+  kernel_max: 1.x
+  entrypoint: html-renderer/SKILL.md
+  description: Modular HTML rendering engine for PARA Workspace. Converts Markdown docs, code graphs, and standalone files to themed HTML pages. Supports dashboard, portal, help templates and wiki articles.
+  tags:
+  - html
+  - renderer
+  - docs
+  - graph
+  - markdown
+- id: new-project
+  name: New Project
+  kernel_min: 1.8.10
+  kernel_max: 1.x
+  entrypoint: new-project/SKILL.md
+  description: Sidecar skill for the /new-project workflow. Defines architectural guidelines, design patterns, and local project-specific rule setup.
+  tags:
+  - scaffold
+  - standards
+  - design-patterns
+  - sidecar
+- id: scan-sec
+  name: Vulnerability Scanner Templates
+  kernel_min: 1.8.11
+  kernel_max: 1.x
+  entrypoint: scan-sec/SKILL.md
+  description: Sidecar data for /scan-sec workflow — vulnerability scanning rules, OWASP Top 10 mappings, and report templates.
+  tags:
+  - scan-sec
+  - security
+  - sidecar
+- id: para-audit
+  name: Workspace Audit Extensions
+  kernel_min: 1.8.16
+  kernel_max: 1.x
+  entrypoint: para-audit/SKILL.md
+  description: Sidecar data for /para-audit workflow — version-specific audit rules, legacy files database, and auto-cleanup checks.
+  tags:
+  - audit
+  - sidecar
+  - legacy
+- id: staging
+  name: Staging Templates
+  kernel_min: 1.8.11
+  kernel_max: 1.x
+  entrypoint: staging/SKILL.md
+  description: Sidecar data for /staging workflow — custom path mapping configurations for releasing templates.
+  tags:
+  - staging
+  - release
+  - sidecar
+- id: vibecode
+  name: Vibecode Execution Templates
+  kernel_min: 1.8.11
+  kernel_max: 1.x
+  entrypoint: vibecode/SKILL.md
+  description: Sidecar data for /vibecode workflow — verification checklists and execution mode presets.
+  tags:
+  - vibecode
+  - execution
+  - sidecar
+- id: sidecar-skill
+  name: Sidecar Skill Governance
+  kernel_min: 1.8.11
+  kernel_max: 1.x
+  entrypoint: sidecar-skill/SKILL.md
+  description: Architectural rules and standards for creating Sidecar Skills to support Workflows.
+  tags:
+  - governance
+  - standards
+  - sidecar
+- id: resource
+  name: Resource Study Templates
+  kernel_min: 1.8.11
+  kernel_max: 1.x
+  entrypoint: resource/SKILL.md
+  description: Sidecar data for /resource workflow — study templates for learning patterns from imported resources.
+  tags:
+  - resource
+  - learning
+  - templates
+  - sidecar
+
+

@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PARA Project Manifest",
+  "description": "Validates .project.yml — per-project metadata inside Projects/.",
+  "type": "object",
+  "required": ["name", "status", "kernel_version", "created_at"],
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Kebab-case project name."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "inactive", "archived"],
+      "description": "Project lifecycle status."
+    },
+    "kernel_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+",
+      "description": "Kernel version at project creation."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 creation date."
+    },
+    "owner": {
+      "type": "string",
+      "description": "GitHub handle or name."
+    },
+    "profile": {
+      "type": "string",
+      "enum": ["dev", "general", "marketer", "ceo"],
+      "description": "Profile used for this project."
+    },
+    "deadline": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Optional deadline (ISO 8601 or null)."
+    },
+    "description": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "active_plan": {
+      "type": ["string", "null"],
+      "description": "Relative path to active plan file (from artifacts/). Supports cross-project prefix: @{ecosystem}/plans/xxx.md resolves to Projects/{ecosystem}/artifacts/plans/xxx.md. Null or empty when no plan is active."
+    },
+    "has_rules": {
+      "type": "boolean",
+      "default": false,
+      "description": "DEPRECATED (v1.6.2): Use 'agent' map instead. Kept for backward compatibility — /open checks agent.rules first, falls back to has_rules."
+    },
+    "agent": {
+      "type": ["object", "null"],
+      "description": "Agent configuration map for project-level indices. Replaces has_rules (v1.6.2). Null or absent for projects with no custom agent config.",
+      "properties": {
+        "rules": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this project has a custom rules index in .agent/rules.md."
+        },
+        "skills": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this project has a custom skills index in .agent/skills.md."
+        }
+      },
+      "additionalProperties": false
+    },
+    "type": {
+      "type": "string",
+      "enum": ["standard", "ecosystem", "meta-project"],
+      "default": "standard",
+      "description": "Project type. 'ecosystem' coordinates satellites (no code). 'meta-project' produces code AND coordinates satellites. Default: standard."
+    },
+    "ecosystem": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Name of the parent ecosystem (meta-project slug). Set on satellite projects to link them to their ecosystem. Null for standalone or ecosystem projects."
+    },
+    "satellites": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "description": "List of satellite project slugs coordinated by this project. Valid when type is 'ecosystem' or 'meta-project'. Null for standard projects."
+    },
+    "strategy": {
+      "type": ["string", "null"],
+      "description": "Path to strategy doc. Relative from project root (e.g., 'docs/strategy/strategy.md'). Supports cross-project prefix: @{ecosystem}/docs/strategy.md resolves to Projects/{ecosystem}/docs/strategy.md. Null or empty when no strategy exists.",
+      "examples": ["docs/strategy/strategy.md", "@pageel/docs/strategy.md"]
+    },
+    "roadmap": {
+      "type": ["string", "null"],
+      "description": "Path to roadmap file. Relative from artifacts/ (e.g., 'plans/ecosystem-roadmap.md'). Supports cross-project prefix: @{ecosystem}/plans/xxx-roadmap.md resolves to Projects/{ecosystem}/artifacts/plans/xxx-roadmap.md. Null or empty when no roadmap exists.",
+      "examples": ["plans/ecosystem-roadmap.md", "@pageel/plans/cms-branch-roadmap.md"]
+    }
+  }
+}

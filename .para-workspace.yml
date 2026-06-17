@@ -1,0 +1,26 @@
+# PARA Workspace Configuration
+# Generated: 2026-06-16
+
+kernel_version: "1.9.2"
+profile: "general"
+language:
+  default: "en"
+  repo: "en"
+  docs: "en, vi"
+  artifacts: "en"
+  thinking: "en"
+  chat: "en"
+
+# Preferences (BUG-10 Node Path Resolution)
+preferences:
+  node_path: "/opt/homebrew/bin"
+
+# Repo source for updates
+repo:
+  url: "https://github.com/pageel/para-workspace"
+  branch: "main"
+
+# Workspace metadata
+workspace:
+  version: "1.0.0"
+  created: "2026-06-16"

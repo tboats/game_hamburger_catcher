@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+
+# System files
+.DS_Store
+Thumbs.db
+*.local

@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="/* WORKSPACE_LANG */">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/* CURRENT_DOC_NAME */ | /* TRANSLATE:title */</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    
+    <!-- Google Fonts: Outfit, Inter, Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Mermaid.js for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    
+    <!-- Svg-Pan-Zoom for Mermaid -->
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            /* Light Theme colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #fbfbfa;
+            --text-primary: #37352f;
+            --text-secondary: #7c7b77;
+            --border-color: #efefe8;
+            --accent-color: #2383e2;
+            --accent-hover: #1263ad;
+            --right-sidebar-width: 240px;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji";
+            --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
+            --code-bg: #f7f6f3;
+            --header-height: 56px;
+            --hover-color: rgba(55, 53, 47, 0.04);
+        }
+
+        [data-theme="dark"] {
+            /* Dark Theme colors */
+            --bg-primary: #191919;
+            --bg-secondary: #202020;
+            --text-primary: #e3e3e2;
+            --text-secondary: #9b9a97;
+            --border-color: #2e2e2e;
+            --accent-color: #2eaadc;
+            --accent-hover: #1b85af;
+            --code-bg: #252525;
+            --hover-color: rgba(255, 255, 255, 0.055);
+            color-scheme: dark;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main Content Area */
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        header {
+            min-height: var(--header-height);
+            height: auto;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+            z-index: 10;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            min-height: var(--header-height);
+            height: auto;
+            padding: 10px 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-actions {
+            display: none !important;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-action:hover {
+            background-color: rgba(55, 53, 47, 0.04);
+        }
+        [data-theme="dark"] .btn-action:hover {
+            background-color: rgba(255, 255, 255, 0.055);
+        }
+
+        .customizer-select {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .content-wrapper {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 36px;
+            scroll-behavior: smooth;
+        }
+
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .breadcrumbs .separator {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .breadcrumbs svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Resizable Divider for Right Sidebar */
+        .resizer {
+            width: 4px;
+            background-color: transparent;
+            cursor: col-resize;
+            position: relative;
+            z-index: 100;
+            flex-shrink: 0;
+            height: 100%;
+        }
+
+        .resizer:hover, .resizer.resizing {
+            background-color: var(--accent-color);
+        }
+
+        .resizer.collapsed {
+            display: none !important;
+        }
+
+        /* Right Sidebar: Table of Contents */
+        aside.right-sidebar {
+            width: var(--right-sidebar-width);
+            background-color: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+            transition: width 0.2s ease, border-left-color 0.2s ease;
+        }
+
+        aside.right-sidebar.collapsed {
+            width: 0 !important;
+            border-left-color: transparent;
+            overflow: hidden;
+        }
+
+        .right-header {
+            height: var(--header-height);
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        .right-sidebar-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .right-sidebar-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .doc-title {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+            word-wrap: break-word;
+        }
+
+        .doc-source-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .doc-source-link:hover {
+            color: var(--accent-color);
+        }
+
+        .doc-source-link svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .menu-item {
+            margin-bottom: 6px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 12.5px;
+            line-height: 1.4;
+            border-radius: 4px;
+            padding: 4px 6px;
+        }
+
+        .menu-item a:hover {
+            background-color: rgba(55, 53, 47, 0.04);
+            color: var(--text-primary);
+        }
+        [data-theme="dark"] .menu-item a:hover {
+            background-color: rgba(255, 255, 255, 0.055);
+            color: var(--text-primary);
+        }
+
+        /* Metadata Accordion */
+        .metadata-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .metadata-toggle-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid rgba(245, 188, 0, 0.25);
+            border-radius: 6px;
+            background-color: rgba(245, 188, 0, 0.05);
+            color: #b58900;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .metadata-toggle-btn:hover {
+            background-color: rgba(245, 188, 0, 0.1);
+            border-color: #b58900;
+        }
+        [data-theme="dark"] .metadata-toggle-btn {
+            color: #d8a000;
+            border-color: rgba(245, 188, 0, 0.3);
+            background-color: rgba(245, 188, 0, 0.07);
+        }
+        [data-theme="dark"] .metadata-toggle-btn:hover {
+            background-color: rgba(245, 188, 0, 0.14);
+            border-color: #d8a000;
+        }
+
+        .metadata-dropdown {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* TOC Accordion */
+        .toc-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toc-toggle-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--hover-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .toc-toggle-btn:hover {
+            background-color: rgba(55, 53, 47, 0.08);
+            border-color: var(--text-secondary);
+        }
+        [data-theme="dark"] .toc-toggle-btn:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .toc-dropdown {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Drift Audit Accordion */
+        .drift-audit-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .drift-audit-toggle-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 6px;
+            background-color: rgba(239, 68, 68, 0.05);
+            color: #ef4444;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .drift-audit-toggle-btn:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        .drift-audit-toggle-btn.no-issues {
+            border-color: rgba(16, 185, 129, 0.25);
+            background-color: rgba(16, 185, 129, 0.05);
+            color: #10b981;
+        }
+
+        .drift-audit-toggle-btn.no-issues:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+        }
+
+        [data-theme="dark"] .drift-audit-toggle-btn {
+            color: #ff6b6b;
+            border-color: rgba(239, 68, 68, 0.3);
+            background-color: rgba(239, 68, 68, 0.07);
+        }
+        [data-theme="dark"] .drift-audit-toggle-btn:hover {
+            background-color: rgba(239, 68, 68, 0.14);
+            border-color: #ff6b6b;
+        }
+
+        [data-theme="dark"] .drift-audit-toggle-btn.no-issues {
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.3);
+            background-color: rgba(16, 185, 129, 0.07);
+        }
+        [data-theme="dark"] .drift-audit-toggle-btn.no-issues:hover {
+            background-color: rgba(16, 185, 129, 0.14);
+            border-color: #34d399;
+        }
+
+        .drift-audit-dropdown {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .drift-issue-item {
+            padding: 8px;
+            border-radius: 4px;
+            background-color: var(--hover-color);
+            border-left: 3px solid #ef4444;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: left;
+        }
+        .drift-issue-item.high {
+            border-left-color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.03);
+        }
+        .drift-issue-item.medium {
+            border-left-color: #f59e0b;
+            background-color: rgba(245, 158, 11, 0.03);
+        }
+        .drift-issue-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .drift-issue-desc {
+            color: var(--text-secondary);
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        .drift-issue-sol {
+            color: var(--accent-color);
+            font-size: 11px;
+            margin-top: 2px;
+            font-style: italic;
+        }
+        .drift-no-issues-msg {
+            color: #10b981;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            text-align: left;
+        }
+
+        /* Stats Panel in Right Sidebar */
+        .stats-panel-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .stat-card {
+            background-color: var(--hover-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--text-secondary);
+            transform: translateY(-1px);
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-value.text-success {
+            color: #2eb85c;
+        }
+        [data-theme="dark"] .stat-value.text-success {
+            color: #4dbd74;
+        }
+
+        .stat-value.text-warning {
+            color: #f9b115;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* AI Prompts Suggestions Panel */
+        .ai-prompts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ai-prompts-toggle-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid rgba(35, 131, 226, 0.25);
+            border-radius: 6px;
+            background-color: rgba(35, 131, 226, 0.05);
+            color: var(--accent-color);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .ai-prompts-toggle-btn:hover {
+            background-color: rgba(35, 131, 226, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        .ai-prompts-dropdown {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .prompt-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-left: 6px;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1.2;
+        }
+        .prompt-badge.attention {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+        .prompt-badge.suggest {
+            background-color: rgba(35, 131, 226, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(35, 131, 226, 0.25);
+        }
+
+        .prompt-item {
+            padding: 6px 10px;
+            font-size: 12.5px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-primary);
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        .prompt-item:hover {
+            background-color: var(--hover-color);
+            color: var(--accent-color) !important;
+        }
+
+        .prompt-item svg {
+            width: 12px;
+            height: 12px;
+            opacity: 0.5;
+            transition: opacity 0.15s ease;
+        }
+
+        .prompt-item:hover svg {
+            opacity: 0.9;
+            color: var(--accent-color);
+        }
+
+        /* Markdown Formatting (Notion minimal style) */
+        .markdown-body {
+            font-family: var(--font-sans);
+            line-height: 1.65;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
+            font-family: var(--font-display);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 28px;
+            margin-bottom: 8px;
+            position: relative;
+            letter-spacing: -0.2px;
+        }
+
+        .markdown-body h1 { font-size: 28px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; }
+        .markdown-body h2 { font-size: 20px; }
+        .markdown-body h3 { font-size: 16.5px; }
+        .markdown-body h4 { font-size: 14.5px; }
+
+        .markdown-body p, .markdown-body ul, .markdown-body ol {
+            margin-bottom: 14px;
+        }
+
+        .markdown-body ul, .markdown-body ol {
+            padding-left: 20px;
+        }
+
+        .markdown-body li {
+            margin-bottom: 4px;
+        }
+
+        .markdown-body a {
+            color: var(--accent-color);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(35, 131, 226, 0.2);
+        }
+
+        .markdown-body a:hover {
+            color: var(--accent-hover);
+            border-bottom-color: var(--accent-hover);
+        }
+
+        .markdown-body code {
+            font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 85%;
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .markdown-body pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .markdown-body pre code {
+            font-size: 13.5px;
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+            display: block;
+        }
+
+        /* Copy code button in pre */
+        .copy-code-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .markdown-body pre:hover .copy-code-btn {
+            opacity: 1;
+        }
+
+        .copy-code-btn svg {
+            width: 13px;
+            height: 13px;
+            color: var(--text-secondary);
+        }
+
+        .copy-code-btn:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .markdown-body blockquote {
+            border-left: 3px solid var(--border-color);
+            padding-left: 14px;
+            color: var(--text-secondary);
+            margin: 16px 0;
+            font-style: italic;
+        }
+
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+
+        .markdown-body th, .markdown-body td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .markdown-body th {
+            background-color: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .markdown-body tr:hover {
+            background-color: rgba(55, 53, 47, 0.015);
+        }
+        [data-theme="dark"] .markdown-body tr:hover {
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        /* Notion Clean Callout Blocks */
+        .clean-callout {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            margin: 16px 0;
+            font-size: 14.5px;
+        }
+
+        .callout-icon {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 2px;
+            color: var(--text-secondary);
+        }
+
+        .callout-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .callout-content {
+            flex-grow: 1;
+        }
+
+        .callout-content p {
+            margin-bottom: 0 !important;
+        }
+
+        .alert-note { border-left: 4px solid var(--accent-color); }
+        .alert-tip { border-left: 4px solid #10b981; }
+        .alert-important { border-left: 4px solid #ea580c; }
+        .alert-warning { border-left: 4px solid #f59e0b; }
+        .alert-caution { border-left: 4px solid #ef4444; }
+
+        /* Mermaid Graph styling overrides */
+        .mermaid {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Lucide anchor edit styles */
+        .agent-edit-anchor {
+            position: absolute;
+            left: -22px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .markdown-body h1:hover .agent-edit-anchor,
+        .markdown-body h2:hover .agent-edit-anchor,
+        .markdown-body h3:hover .agent-edit-anchor {
+            opacity: 1;
+        }
+
+        .agent-edit-anchor svg {
+            width: 12px;
+            height: 12px;
+            color: var(--text-secondary);
+        }
+
+        .agent-edit-anchor:hover svg {
+            color: var(--accent-color);
+        }
+
+        /* Medium-style inline comment popup */
+        #inline-feedback-popup {
+            position: absolute;
+            display: none;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 6px;
+            padding: 6px 10px;
+            z-index: 1000;
+            align-items: center;
+        }
+
+        #inline-feedback-popup button {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 12px;
+            font-family: var(--font-sans);
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        #inline-feedback-popup button:hover {
+            color: var(--accent-color);
+        }
+
+        #inline-feedback-popup button svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        #inline-feedback-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: var(--font-sans);
+            font-size: 12px;
+            color: var(--text-primary);
+            width: 180px;
+        }
+
+        #inline-feedback-copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        #inline-feedback-copy-btn:hover {
+            color: var(--accent-color) !important;
+        }
+
+        /* Feedback modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 460px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+
+        .modal-body textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 13px;
+            outline: none;
+            resize: none;
+        }
+
+        .modal-body textarea:focus {
+            border-color: var(--accent-color);
+        }
+
+        .modal-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-submit {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Toast notification */
+        #toast-notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #2e7d32;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 3000;
+        }
+
+        #toast-notification svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .docs-footer {
+            margin-top: 40px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            opacity: 0.75;
+        }
+
+        .footer-divider {
+            color: var(--border-color);
+        }
+
+        .footer-spacer {
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        /* Mermaid Zoom Toolbar & Fullscreen Styling */
+        .zoom-action-btn:hover {
+            background-color: var(--hover-color);
+        }
+        .mermaid-wrapper-relative {
+            position: relative;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            height: 450px;
+            width: 100%;
+        }
+        .mermaid-wrapper-relative.fullscreen-active {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            background-color: var(--bg-primary) !important;
+            padding: 24px !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .mermaid-wrapper-relative.fullscreen-active .mermaid-viewer-container {
+            flex-grow: 1 !important;
+            height: 100% !important;
+        }
+        .mermaid-viewer-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Metadata Panel in Right Sidebar */
+        .doc-metadata-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .metadata-row {
+            display: grid;
+            grid-template-columns: 85px 1fr;
+            align-items: center;
+            font-size: 12px;
+            gap: 8px;
+        }
+
+        .metadata-key {
+            color: var(--text-secondary);
+            font-family: var(--font-display);
+            font-size: 10.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .metadata-value-container {
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .metadata-value {
+            color: var(--text-primary);
+            font-weight: 500;
+            word-break: break-word;
+            font-size: 12.5px;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.2;
+            text-transform: capitalize;
+        }
+
+        .status-badge.approved, .status-badge.done, .status-badge.completed, .status-badge.da-phe-duyet, .status-badge.active, .status-badge.hoat-dong {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .status-badge.draft, .status-badge.nhap, .status-badge.pending, .status-badge.dang-xu-ly, .status-badge.wip {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+
+        .status-badge.stale, .status-badge.outdated, .status-badge.cu, .status-badge.het-han, .status-badge.expired {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .status-badge.default {
+            background-color: var(--code-bg);
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Content Area -->
+    <main>
+        <header>
+            <div class="header-top">
+                <div class="header-left" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; max-width: 100%;">
+                    <div class="breadcrumbs" id="breadcrumbs-container" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;"></div>
+                    <span class="separator-main" id="title-separator" style="display: none; align-items: center; color: var(--text-secondary); opacity: 0.5; margin: 0 2px;"><i data-lucide="chevron-right" style="width: 12px; height: 12px;"></i></span>
+                    <span class="header-title" id="header-doc-title" style="font-weight: 600; font-size: 13.5px; color: var(--text-primary); white-space: normal; word-break: break-word;"></span>
+                    <span id="font-size-indicator" style="display: none;">16px</span>
+                    <span id="width-indicator" style="display: none;">720px</span>
+                </div>
+                <div class="header-actions">
+                    <!-- Typography adjustments -->
+                    <select class="customizer-select" id="font-select" onchange="changeFont(this.value)">
+                        <option value="inter">/* TRANSLATE:fontSelectInter */</option>
+                        <option value="outfit">/* TRANSLATE:fontSelectOutfit */</option>
+                        <option value="roboto">/* TRANSLATE:fontSelectRoboto */</option>
+                        <option value="georgia">/* TRANSLATE:fontSelectGeorgia */</option>
+                    </select>
+
+                    <button class="btn-action" onclick="changeFontSize(-1)"><i data-lucide="minus"></i></button>
+                    <button class="btn-action" onclick="changeFontSize(1)"><i data-lucide="plus"></i></button>
+
+                    <span style="border-left: 1px solid var(--border-color); height: 20px; margin: 0 2px;"></span>
+                    
+                    <!-- Page margins width control -->
+                    <button class="btn-action" onclick="changePageWidth(-50)"><i data-lucide="minimize-2"></i></button>
+                    <button class="btn-action" onclick="changePageWidth(50)"><i data-lucide="maximize-2"></i></button>
+
+                    <span style="border-left: 1px solid var(--border-color); height: 20px; margin: 0 2px;"></span>
+
+                    <button class="btn-action" onclick="toggleRightSidebar()" title="/* TRANSLATE:tocToggleTitle */"><i data-lucide="list"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div id="content-container" style="width: 100%; max-width: 720px; display: flex; flex-direction: column; margin: 0 auto;">
+                <article class="markdown-body font-preset-inter" id="content" style="width: 100%; max-width: 100%;">
+                    <!-- Markdown parsed structure will be injected here -->
+                </article>
+                <footer class="docs-footer">
+                    <span><i data-lucide="clock"></i> /* TRANSLATE:footerRendered */ /* RENDER_TIME */</span>
+                    <span class="footer-divider">|</span>
+                    <span><i data-lucide="network"></i> Kernel v/* KERNEL_VERSION */</span>
+                </footer>
+                <div class="footer-spacer"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Draggable Divider for Right Sidebar -->
+    <div class="resizer" id="right-resizer"></div>
+
+    <!-- Right Sidebar: Table of Contents & Info -->
+    <aside class="right-sidebar" id="right-sidebar">
+        <div class="right-header">
+            /* TRANSLATE:rightSidebarHeader */
+        </div>
+        
+        <div class="right-sidebar-content">
+            <div class="right-sidebar-info">
+                <div class="doc-title" id="current-doc-name">/* CURRENT_DOC_NAME */</div>
+                <a class="doc-source-link" id="current-doc-source" href="file:///* SOURCE_MD_ABS_PATH *" onclick="openFolderInSystem(event, '/* SOURCE_MD_ABS_PATH */')" title="/* TRANSLATE:sourceTitle */">
+                    <i data-lucide="folder-open"></i> /* SOURCE_MD_PATH */
+                </a>
+            </div>
+            
+            <!-- STATS_PANEL_PLACEHOLDER -->
+            
+            <!-- DOC_METADATA_PLACEHOLDER -->
+            
+            <!-- AI_PROMPTS_PLACEHOLDER -->
+            
+            <!-- DRIFT_AUDIT_PLACEHOLDER -->
+            
+            <div class="toc-container">
+                <button class="toc-toggle-btn" id="toc-toggle-btn" onclick="toggleTocDropdown()">
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                        <i data-lucide="list" style="width: 14px; height: 14px;"></i>
+                        <span>/* TRANSLATE:tocTitle */</span>
+                    </span>
+                    <i data-lucide="chevron-down" id="toc-chevron" style="width: 14px; height: 14px; transition: transform 0.2s; transform: rotate(180deg);"></i>
+                </button>
+                <div class="toc-dropdown" id="toc-dropdown" style="display: flex;">
+                    <ul class="menu-list" id="toc-list" style="font-size: 13px;">
+                        <!-- Dynamically extracted from Markdown headers -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Modal Popup for Agent Edit Comments -->
+    <div class="modal" id="agent-feedback-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>/* TRANSLATE:modalTitle */</h3>
+                <button class="modal-close" onclick="closeFeedbackModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;" id="feedback-context">/* TRANSLATE:modalTarget */ Document Body</p>
+                <textarea id="feedback-text" placeholder="/* TRANSLATE:modalPlaceholder */"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-action" onclick="closeFeedbackModal()">/* TRANSLATE:modalCancel */</button>
+                <button class="btn-submit" onclick="submitFeedback()">/* TRANSLATE:modalSubmit */</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inline Feedback Tooltip Popup -->
+    <div id="inline-feedback-popup">
+        <!-- Mode 1: Action Menu -->
+        <div id="inline-action-menu" style="display: flex; gap: 4px; align-items: center;">
+            <button onclick="switchToInlineComment(event)" title="/* TRANSLATE:chatBtn */" style="display: flex; align-items: center; gap: 4px;">
+                <i data-lucide="message-square" style="color: var(--accent-color);"></i> /* TRANSLATE:inlineCommentBtn */
+            </button>
+            <span style="border-left: 1px solid var(--border-color); height: 16px; margin: 0 4px;"></span>
+            <button onclick="copyRawSelectionText(event)" title="Copy text" style="display: flex; align-items: center; gap: 4px;">
+                <i data-lucide="copy"></i> /* TRANSLATE:inlineCopyBtn */
+            </button>
+        </div>
+        <!-- Mode 2: Comment Form -->
+        <div id="inline-comment-form" style="display: none; align-items: center; gap: 6px; width: 100%;">
+            <input type="text" id="inline-feedback-input" placeholder="/* TRANSLATE:inlinePlaceholder */">
+            <button id="inline-feedback-copy-btn" onclick="submitInlineFeedback()" title="/* TRANSLATE:modalSubmit */">
+                <i data-lucide="copy"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast-notification">
+        <i data-lucide="check-circle"></i> <span id="toast-message">Copied!</span>
+    </div>
+
+    <script>
+        // Embed parsed Markdown content variables statically
+        const embeddedMarkdown = `/* MARKDOWN_CONTENT_PLACEHOLDER */`;
+        const currentDocFile = `/* SOURCE_MD_PATH */`;
+        const currentDocAbsPath = `/* SOURCE_MD_ABS_PATH */`;
+
+        // Initialize Mermaid diagrams
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // Theme management (controlled by Portal parent)
+        let theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        mermaid.initialize({ theme: theme === 'dark' ? 'dark' : 'light' });
+
+        // Listen for theme and language change messages from Portal
+        window.addEventListener('message', (e) => {
+            if (e.data) {
+                if (e.data.type === 'history-back') {
+                    window.history.back();
+                } else if (e.data.type === 'history-forward') {
+                    window.history.forward();
+                } else if (e.data.type === 'set-theme') {
+                    const newTheme = e.data.theme;
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    // Reload page if theme changes to force mermaid rebuild with new style
+                    if (theme !== newTheme) {
+                        theme = newTheme;
+                        localStorage.setItem('theme', newTheme);
+                        location.reload();
+                    }
+                } else if (e.data.type === 'set-lang') {
+                    const newLang = e.data.lang;
+                    const currentHref = window.location.href;
+                    let targetHref = null;
+                    if (newLang === 'en' && currentHref.includes('/vi/')) {
+                        targetHref = currentHref.replace('/vi/', '/en/');
+                    } else if (newLang === 'vi' && currentHref.includes('/en/')) {
+                        targetHref = currentHref.replace('/en/', '/vi/');
+                    }
+                    if (targetHref && targetHref !== currentHref) {
+                        window.location.href = targetHref;
+                    }
+                } else if (e.data.type === 'viewer-command') {
+                    const action = e.data.action;
+                    const value = e.data.value;
+                    if (action === 'set-font') {
+                        changeFont(value);
+                    } else if (action === 'change-font-size') {
+                        changeFontSize(value);
+                    } else if (action === 'change-page-width') {
+                        changePageWidth(value);
+                    } else if (action === 'toggle-right-sidebar') {
+                        toggleRightSidebar();
+                    }
+                }
+            }
+        });
+
+        // Intercept all relative documentation HTML links to notify Portal parent
+        document.addEventListener('click', (e) => {
+            const a = e.target.closest('a');
+            if (a) {
+                const href = a.getAttribute('href');
+                // Intercept relative html paths, excluding absolute protocols or in-page hash links
+                if (href && !href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('file://') && !href.startsWith('#') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+                    e.preventDefault();
+                    window.parent.postMessage({
+                        type: 'navigate',
+                        href: href,
+                        baseUrl: window.location.href
+                    }, '*');
+                }
+            }
+        });
+
+        // Apply customized Font and Width settings
+        let currentFontSize = parseInt(localStorage.getItem('doc-font-size')) || 16;
+        let currentFontFamily = localStorage.getItem('doc-font-family') || 'inter';
+        let currentPageWidth = localStorage.getItem('doc-page-width') || '720px';
+
+        function applyTypography() {
+            const container = document.getElementById('content-container');
+            const content = document.getElementById('content');
+            content.className = 'markdown-body';
+            
+            const fontMap = {
+                'inter': '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+                'outfit': "'Outfit', sans-serif",
+                'roboto': "'Roboto', sans-serif",
+                'georgia': "'Georgia', serif"
+            };
+            const fontValue = fontMap[currentFontFamily] || fontMap['inter'];
+            document.documentElement.style.setProperty('--font-sans', fontValue);
+
+            document.body.className = document.body.className
+                .replace(/\bfont-preset-\S+/g, '')
+                .trim();
+            document.body.classList.add('font-preset-' + currentFontFamily);
+            
+            content.style.fontSize = currentFontSize + 'px';
+            
+            const wrapper = document.querySelector('.content-wrapper');
+            let paddingVal = '24px';
+            if (currentPageWidth === 'Full') {
+                if (container) container.style.maxWidth = '100%';
+                paddingVal = '12px';
+            } else {
+                if (container) container.style.maxWidth = currentPageWidth;
+                const widthNum = parseInt(currentPageWidth);
+                
+                if (widthNum <= 600) {
+                    paddingVal = '48px';
+                } else if (widthNum <= 720) {
+                    paddingVal = '36px';
+                } else if (widthNum <= 800) {
+                    paddingVal = '28px';
+                } else if (widthNum <= 900) {
+                    paddingVal = '20px';
+                } else {
+                    paddingVal = '12px';
+                }
+            }
+            if (wrapper) {
+                wrapper.style.padding = paddingVal;
+            }
+            
+            const fontSelect = document.getElementById('font-select');
+            if (fontSelect) fontSelect.value = currentFontFamily;
+            const fontSizeIndicator = document.getElementById('font-size-indicator');
+            if (fontSizeIndicator) fontSizeIndicator.textContent = currentFontSize + 'px';
+            const widthIndicator = document.getElementById('width-indicator');
+            if (widthIndicator) widthIndicator.textContent = currentPageWidth;
+        }
+
+        // Document Viewer Mermaid Zoom & Fullscreen Controls
+        window.activePanZoomInstances = {};
+
+        function zoomDocMermaid(chartId, factor) {
+            const instance = window.activePanZoomInstances[chartId];
+            if (instance) {
+                if (factor > 1) {
+                    instance.zoomIn();
+                } else {
+                    instance.zoomOut();
+                }
+            }
+        }
+
+        function resetDocMermaid(chartId) {
+            const instance = window.activePanZoomInstances[chartId];
+            if (instance) {
+                instance.reset();
+                instance.fit();
+                instance.center();
+            }
+        }
+
+        function toggleFullscreenDocMermaid(wrapperId, chartId) {
+            const wrapper = document.getElementById(wrapperId);
+            const btn = document.getElementById('btn-fullscreen-' + chartId);
+            
+            if (!wrapper) return;
+            
+            const isFullscreen = wrapper.classList.toggle('fullscreen-active');
+            
+            if (isFullscreen) {
+                btn.innerHTML = '<i data-lucide="minimize-2" style="width: 15px; height: 15px;"></i>';
+            } else {
+                btn.innerHTML = '<i data-lucide="expand" style="width: 15px; height: 15px;"></i>';
+            }
+            
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+            
+            const instance = window.activePanZoomInstances[chartId];
+            if (instance) {
+                setTimeout(() => {
+                    instance.resize();
+                    instance.fit();
+                    instance.center();
+                }, 100);
+            }
+        }
+
+        function changeFont(fontName) {
+            currentFontFamily = fontName;
+            localStorage.setItem('doc-font-family', fontName);
+            applyTypography();
+        }
+
+        function changeFontSize(direction) {
+            currentFontSize = Math.max(12, Math.min(24, currentFontSize + direction * 1));
+            localStorage.setItem('doc-font-size', currentFontSize);
+            applyTypography();
+        }
+
+        function changePageWidth(delta) {
+            if (currentPageWidth === 'Full') {
+                if (delta < 0) {
+                    currentPageWidth = '1000px';
+                }
+            } else {
+                let currentVal = parseInt(currentPageWidth);
+                let newVal = currentVal + delta;
+                if (newVal >= 600 && newVal <= 1000) {
+                    currentPageWidth = newVal + 'px';
+                } else if (newVal > 1000) {
+                    currentPageWidth = 'Full';
+                }
+            }
+            localStorage.setItem('doc-page-width', currentPageWidth);
+            applyTypography();
+        }
+
+        // Trigger OS default editor open
+        async function executeOpenSystem(targetPath) {
+            try {
+                const response = await fetch('http://localhost:3000/api/open-file', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file: targetPath })
+                });
+                if (!response.ok) {
+                    window.location.href = 'file://' + targetPath;
+                }
+            } catch (err) {
+                window.location.href = 'file://' + targetPath;
+            }
+        }
+
+        function getParentDirectory(filePath) {
+            const parts = filePath.split('/');
+            parts.pop();
+            return parts.join('/');
+        }
+
+        async function openFolderInSystem(event, filePath) {
+            event.preventDefault();
+            const parentDir = getParentDirectory(filePath);
+            await executeOpenSystem(parentDir);
+        }
+
+        // Right Sidebar Dragging
+        const rightSidebar = document.getElementById('right-sidebar');
+        const rightResizer = document.getElementById('right-resizer');
+
+        const savedRightWidth = localStorage.getItem('sidebar-right-width');
+        if (savedRightWidth) {
+            document.documentElement.style.setProperty('--right-sidebar-width', savedRightWidth + 'px');
+            rightSidebar.style.width = savedRightWidth + 'px';
+        }
+
+        if (localStorage.getItem('sidebar-right-collapsed') === 'true') {
+            rightSidebar.classList.add('collapsed');
+            rightResizer.classList.add('collapsed');
+        }
+
+        function toggleRightSidebar() {
+            rightSidebar.classList.toggle('collapsed');
+            rightResizer.classList.toggle('collapsed');
+            localStorage.setItem('sidebar-right-collapsed', rightSidebar.classList.contains('collapsed'));
+        }
+
+        rightResizer.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            rightResizer.classList.add('resizing');
+            document.addEventListener('mousemove', resizeRight);
+            document.addEventListener('mouseup', stopResizeRight);
+        });
+
+        function resizeRight(e) {
+            let width = window.innerWidth - e.clientX;
+            if (width >= 150 && width <= 400) {
+                document.documentElement.style.setProperty('--right-sidebar-width', width + 'px');
+                rightSidebar.style.width = width + 'px';
+            }
+        }
+
+        function stopResizeRight() {
+            rightResizer.classList.remove('resizing');
+            document.removeEventListener('mousemove', resizeRight);
+            document.removeEventListener('mouseup', stopResizeRight);
+            
+            const currentWidth = parseInt(getComputedStyle(rightSidebar).width);
+            localStorage.setItem('sidebar-right-width', currentWidth);
+        }
+
+        // Feedback submission
+        let feedbackContextSection = 'Document Body';
+        let feedbackSelectedText = '';
+
+        function openFeedbackModal(sectionName) {
+            feedbackContextSection = sectionName;
+            feedbackSelectedText = window.getSelection().toString().trim();
+            document.getElementById('feedback-context').textContent = `/* TRANSLATE:modalTarget */ ${sectionName}`;
+            document.getElementById('feedback-text').value = '';
+            document.getElementById('agent-feedback-modal').style.display = 'flex';
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('agent-feedback-modal').style.display = 'none';
+        }
+
+        function getSelectedLines(selectedText) {
+            if (!selectedText) return null;
+            
+            function normalizeText(text) {
+                if (!text) return '';
+                return text
+                    .toLowerCase()
+                    .replace(/[\*\_\`\#\[\]\(\)\-\+\>\!]/g, ' ')
+                    .replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD00-\uDFFF]/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
+
+            const normalizedQuery = normalizeText(selectedText);
+            if (!normalizedQuery) return null;
+
+            const lines = embeddedMarkdown.split('\n');
+            const normalizedLines = lines.map(line => normalizeText(line));
+            
+            for (let i = 0; i < normalizedLines.length; i++) {
+                if (normalizedLines[i] && normalizedLines[i].includes(normalizedQuery)) {
+                    return `L${i + 1}`;
+                }
+            }
+            
+            const queryWords = normalizedQuery.split(' ');
+            if (queryWords.length >= 2) {
+                const firstWords = queryWords.slice(0, Math.min(4, queryWords.length)).join(' ');
+                const lastWords = queryWords.slice(Math.max(0, queryWords.length - 4)).join(' ');
+                
+                let startLineIdx = -1;
+                let endLineIdx = -1;
+                
+                for (let i = 0; i < normalizedLines.length; i++) {
+                    if (normalizedLines[i] && normalizedLines[i].includes(firstWords)) {
+                        startLineIdx = i;
+                        break;
+                    }
+                }
+                
+                if (startLineIdx !== -1) {
+                    for (let i = startLineIdx; i < normalizedLines.length; i++) {
+                        if (normalizedLines[i] && normalizedLines[i].includes(lastWords)) {
+                            endLineIdx = i;
+                            break;
+                        }
+                    }
+                }
+                
+                if (startLineIdx !== -1 && endLineIdx !== -1) {
+                    const startLine = startLineIdx + 1;
+                    const endLine = endLineIdx + 1;
+                    return startLine === endLine ? `L${startLine}` : `L${startLine}-L${endLine}`;
+                }
+            }
+            
+            let index = embeddedMarkdown.indexOf(selectedText);
+            if (index === -1) {
+                const prefix = selectedText.substring(0, Math.min(30, selectedText.length));
+                index = embeddedMarkdown.indexOf(prefix);
+            }
+            
+            if (index !== -1) {
+                const textBefore = embeddedMarkdown.substring(0, index);
+                const startLine = textBefore.split('\n').length;
+                const linesCount = selectedText.split('\n').length;
+                const endLine = startLine + linesCount - 1;
+                
+                return startLine === endLine ? `L${startLine}` : `L${startLine}-L${endLine}`;
+            }
+            return null;
+        }
+
+        function getSectionLine(sectionTitle) {
+            if (!sectionTitle || sectionTitle === 'Document Body') return null;
+            
+            const lines = embeddedMarkdown.split('\n');
+            const cleanTitle = sectionTitle.trim().toLowerCase();
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.startsWith('#')) {
+                    const cleanHeader = line.replace(/^#+\s+/, '').trim().toLowerCase();
+                    if (cleanHeader === cleanTitle || cleanHeader.includes(cleanTitle) || cleanTitle.includes(cleanHeader)) {
+                        return `L${i + 1}`;
+                    }
+                }
+            }
+            return null;
+        }
+
+        async function submitFeedback() {
+            const comment = document.getElementById('feedback-text').value.trim();
+            if (!comment) return;
+
+            const feedbackData = {
+                file: currentDocFile,
+                section: feedbackContextSection,
+                comment: comment,
+                timestamp: new Date().toISOString()
+            };
+
+            let sentToServer = false;
+            try {
+                const response = await fetch('http://localhost:3000/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(feedbackData)
+                });
+                if (response.ok) sentToServer = true;
+            } catch (e) {}
+
+            let lineSuffix = '';
+            const selectedLines = getSelectedLines(feedbackSelectedText);
+            if (selectedLines) {
+                lineSuffix = `:${selectedLines}`;
+            } else {
+                const sectionLine = getSectionLine(feedbackContextSection);
+                if (sectionLine) {
+                    lineSuffix = `:${sectionLine}`;
+                }
+            }
+
+            const lang = document.documentElement.getAttribute('lang') || 'en';
+            const promptText = lang === 'vi'
+                ? `hãy sửa phần "${feedbackContextSection}": "${comment}"`
+                : `please edit section "${feedbackContextSection}": "${comment}"`;
+            const formattedPrompt = `@[${currentDocAbsPath}${lineSuffix}] ${promptText}`;
+
+            try {
+                await navigator.clipboard.writeText(formattedPrompt);
+                let message = '/* TRANSLATE:alertCopySuccess */';
+                if (sentToServer) {
+                    message += '/* TRANSLATE:alertServerSuccess */';
+                }
+                message += '/* TRANSLATE:alertInstructions */';
+                alert(message);
+            } catch (err) {
+                alert(`/* TRANSLATE:modalSubmit */: "${comment}"\n(/* TRANSLATE:alertManualCopy */)`);
+            }
+
+            closeFeedbackModal();
+        }
+
+        // Notion Callouts conversion
+        const calloutTranslations = {
+            note: '/* TRANSLATE:calloutNote */',
+            tip: '/* TRANSLATE:calloutTip */',
+            important: '/* TRANSLATE:calloutImportant */',
+            warning: '/* TRANSLATE:calloutWarning */',
+            caution: '/* TRANSLATE:calloutCaution */'
+        };
+
+        function parseAlertsToCallouts(html) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            const blockquotes = tempDiv.querySelectorAll('blockquote');
+            blockquotes.forEach(bq => {
+                const text = bq.textContent.trim();
+                let type = '';
+                let icon = '';
+                let titleText = '';
+                let label = '';
+                
+                if (text.startsWith('[!NOTE]')) {
+                    type = 'alert-note';
+                    icon = '<i data-lucide="info"></i>';
+                    titleText = '[!NOTE]';
+                    label = calloutTranslations.note;
+                } else if (text.startsWith('[!TIP]')) {
+                    type = 'alert-tip';
+                    icon = '<i data-lucide="lightbulb"></i>';
+                    titleText = '[!TIP]';
+                    label = calloutTranslations.tip;
+                } else if (text.startsWith('[!IMPORTANT]')) {
+                    type = 'alert-important';
+                    icon = '<i data-lucide="alert-circle"></i>';
+                    titleText = '[!IMPORTANT]';
+                    label = calloutTranslations.important;
+                } else if (text.startsWith('[!WARNING]')) {
+                    type = 'alert-warning';
+                    icon = '<i data-lucide="alert-triangle"></i>';
+                    titleText = '[!WARNING]';
+                    label = calloutTranslations.warning;
+                } else if (text.startsWith('[!CAUTION]')) {
+                    type = 'alert-caution';
+                    icon = '<i data-lucide="shield-alert"></i>';
+                    titleText = '[!CAUTION]';
+                    label = calloutTranslations.caution;
+                }
+                
+                if (type) {
+                    const calloutDiv = document.createElement('div');
+                    calloutDiv.className = `clean-callout ${type}`;
+                    
+                    const iconDiv = document.createElement('div');
+                    iconDiv.className = 'callout-icon';
+                    iconDiv.innerHTML = icon;
+                    
+                    const contentDiv = document.createElement('div');
+                    contentDiv.className = 'callout-content';
+                    contentDiv.innerHTML = bq.innerHTML.replace(titleText, `<strong>${label}</strong>`);
+                    
+                    calloutDiv.appendChild(iconDiv);
+                    calloutDiv.appendChild(contentDiv);
+                    bq.replaceWith(calloutDiv);
+                }
+            });
+            return tempDiv.innerHTML;
+        }
+
+        function generateTOC() {
+            const content = document.getElementById('content');
+            const tocList = document.getElementById('toc-list');
+            tocList.innerHTML = '';
+            
+            const headings = content.querySelectorAll('h1, h2, h3');
+            headings.forEach((heading, idx) => {
+                const id = 'heading-' + idx;
+                heading.id = id;
+                
+                const item = document.createElement('li');
+                item.className = 'menu-item';
+                
+                const link = document.createElement('a');
+                link.innerHTML = `<i data-lucide="chevron-right" style="width: 8px; height: 8px;"></i> ` + heading.textContent;
+                link.href = '#' + id;
+                
+                item.appendChild(link);
+                tocList.appendChild(item);
+            });
+        }
+
+        async function renderMarkdown() {
+            try {
+                let html = marked.parse(embeddedMarkdown);
+                html = parseAlertsToCallouts(html);
+                
+                const contentDiv = document.getElementById('content');
+                contentDiv.innerHTML = html;
+                
+                // Extract document title from the first H1 tag for the Top Bar (Wordpress/Notion Style)
+                const firstH1 = contentDiv.querySelector('h1');
+                let docTitleText = '';
+                if (firstH1) {
+                    docTitleText = firstH1.textContent.trim();
+                    firstH1.style.display = 'none'; // Hide H1 in content to prevent duplication
+                }
+                const headerDocTitle = document.getElementById('header-doc-title');
+                const titleSeparator = document.getElementById('title-separator');
+                if (headerDocTitle && docTitleText) {
+                    headerDocTitle.textContent = docTitleText;
+                    if (titleSeparator) titleSeparator.style.display = 'inline-flex';
+                }
+                
+                // Notify parent portal that the document has loaded
+                window.parent.postMessage({
+                    type: 'viewer-ready',
+                    docFile: currentDocFile,
+                    docTitle: docTitleText
+                }, '*');
+                
+                contentDiv.querySelectorAll('a').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href) {
+                        const isRelative = !href.startsWith('http://') && !href.startsWith('https://') && !href.startsWith('/') && !href.startsWith('#');
+                        if (isRelative) {
+                            const hashParts = href.split('#');
+                            const queryParts = hashParts[0].split('?');
+                            let pathPart = queryParts[0];
+                            
+                            if (pathPart.endsWith('.md')) {
+                                pathPart = pathPart.substring(0, pathPart.length - 3) + '.html';
+                                queryParts[0] = pathPart;
+                                hashParts[0] = queryParts.join('?');
+                                const newHref = hashParts.join('#');
+                                link.setAttribute('href', newHref);
+                            }
+                        }
+                    }
+                });
+
+                const headings = contentDiv.querySelectorAll('h1, h2, h3');
+                headings.forEach(heading => {
+                    const anchor = document.createElement('a');
+                    anchor.className = 'agent-edit-anchor';
+                    anchor.title = '/* TRANSLATE:chatBtn */';
+                    anchor.innerHTML = '<i data-lucide="message-square"></i>';
+                    anchor.onclick = () => openFeedbackModal(heading.textContent);
+                    heading.prepend(anchor);
+                });
+                
+                const codeBlocks = contentDiv.querySelectorAll('pre code.language-mermaid');
+                const mermaidCharts = [];
+                for (let i = 0; i < codeBlocks.length; i++) {
+                    const codeBlock = codeBlocks[i];
+                    const preBlock = codeBlock.parentElement;
+                    const code = codeBlock.textContent;
+                    const chartId = 'mermaid-chart-' + i;
+                    const wrapperId = 'mermaid-wrapper-' + i;
+                    
+                    // Create Wrapper Relative
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'mermaid-wrapper-relative';
+                    wrapper.id = wrapperId;
+                    
+                    // Create Zoom Toolbar
+                    const toolbar = document.createElement('div');
+                    toolbar.className = 'mermaid-zoom-toolbar';
+                    toolbar.style.cssText = 'position: absolute; top: 12px; right: 12px; display: flex; gap: 4px; background: var(--bg-primary); opacity: 0.85; backdrop-filter: blur(8px); border: 1px solid var(--border-color); padding: 4px; border-radius: 8px; z-index: 99; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);';
+                    toolbar.innerHTML = `
+                        <button class="zoom-action-btn" onclick="zoomDocMermaid('${chartId}', 1.2)" title="Zoom In" style="background: none; border: none; padding: 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: background-color 0.2s;"><i data-lucide="zoom-in" style="width: 15px; height: 15px;"></i></button>
+                        <button class="zoom-action-btn" onclick="zoomDocMermaid('${chartId}', 0.8)" title="Zoom Out" style="background: none; border: none; padding: 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: background-color 0.2s;"><i data-lucide="zoom-out" style="width: 15px; height: 15px;"></i></button>
+                        <button class="zoom-action-btn" onclick="resetDocMermaid('${chartId}')" title="Reset Zoom" style="background: none; border: none; padding: 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: background-color 0.2s;"><i data-lucide="maximize-2" style="width: 15px; height: 15px;"></i></button>
+                        <button class="zoom-action-btn" id="btn-fullscreen-${chartId}" onclick="toggleFullscreenDocMermaid('${wrapperId}', '${chartId}')" title="Toggle Fullscreen" style="background: none; border: none; padding: 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: background-color 0.2s;"><i data-lucide="expand" style="width: 15px; height: 15px;"></i></button>
+                    `;
+                    
+                    // Create Container for diagram
+                    const container = document.createElement('div');
+                    container.className = 'mermaid-viewer-container';
+                    
+                    const div = document.createElement('div');
+                    div.className = 'mermaid';
+                    div.id = chartId;
+                    div.style.cssText = 'width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; border: none; padding: 0; background: transparent; margin: 0;';
+                    div.textContent = code;
+                    
+                    container.appendChild(div);
+                    wrapper.appendChild(toolbar);
+                    wrapper.appendChild(container);
+                    
+                    preBlock.replaceWith(wrapper);
+                    mermaidCharts.push({ chartId, wrapperId, container: div });
+                }
+                
+                if (mermaidCharts.length > 0) {
+                    mermaidCharts.forEach(item => {
+                        item.container.removeAttribute('data-processed');
+                    });
+                    
+                    await mermaid.run();
+                    
+                    window.activePanZoomInstances = window.activePanZoomInstances || {};
+                    mermaidCharts.forEach(item => {
+                        const svgElement = item.container.querySelector('svg');
+                        if (svgElement && window.svgPanZoom) {
+                            svgElement.style.width = '100%';
+                            svgElement.style.height = '100%';
+                            svgElement.style.maxWidth = 'none';
+                            
+                            window.activePanZoomInstances[item.chartId] = window.svgPanZoom(svgElement, {
+                                zoomEnabled: true,
+                                controlIconsEnabled: false,
+                                fit: true,
+                                center: true,
+                                minZoom: 0.1,
+                                maxZoom: 10,
+                                zoomScaleSensitivity: 0.2
+                            });
+                        }
+                    });
+                }
+                generateTOC();
+                applyTypography();
+                setupCodeBlockCopyButtons();
+                lucide.createIcons();
+            } catch (err) {
+                document.getElementById('content').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #ef4444;">
+                        <i data-lucide="x-circle" style="width: 48px; height: 48px; margin-bottom: 16px; margin-left: auto; margin-right: auto;"></i>
+                        <h3>/* TRANSLATE:alertError */</h3>
+                        <p style="margin-top: 8px;">${err.message}</p>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        }
+
+        // Toast notification utility
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-notification');
+            const msgEl = document.getElementById('toast-message');
+            if (!toast || !msgEl) return;
+            msgEl.textContent = message;
+            toast.style.backgroundColor = isError ? '#c62828' : '#2e7d32';
+            toast.style.display = 'flex';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
+        }
+
+        // --- Inline Feedback Selection Logic ---
+        const inlinePopup = document.getElementById('inline-feedback-popup');
+        const inlineInput = document.getElementById('inline-feedback-input');
+        let inlineSelectedText = '';
+        let inlineTargetSection = 'Document Body';
+
+        const contentWrapper = document.querySelector('.content-wrapper');
+        if (contentWrapper) {
+            contentWrapper.addEventListener('mouseup', function(e) {
+                setTimeout(() => {
+                    const selection = window.getSelection();
+                    const selectedText = selection.toString().trim();
+                    
+                    if (selectedText && selectedText.length > 0) {
+                        let parent = selection.anchorNode.parentNode;
+                        let isInsideContent = false;
+                        while (parent) {
+                            if (parent.id === 'content') {
+                                isInsideContent = true;
+                                break;
+                            }
+                            parent = parent.parentNode;
+                        }
+                        
+                        if (isInsideContent) {
+                            inlineSelectedText = selectedText;
+                            inlineTargetSection = findCurrentSectionForNode(selection.anchorNode);
+                            
+                            document.getElementById('inline-action-menu').style.display = 'flex';
+                            document.getElementById('inline-comment-form').style.display = 'none';
+                            
+                            const range = selection.getRangeAt(0);
+                            const rect = range.getBoundingClientRect();
+                            
+                            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+                            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+                            
+                            inlinePopup.style.left = (rect.left + scrollX + (rect.width / 2) - 100) + 'px';
+                            inlinePopup.style.top = (rect.top + scrollY - 44) + 'px';
+                            inlinePopup.style.display = 'flex';
+                            
+                            e.stopPropagation();
+                            return;
+                        }
+                    }
+                    
+                    if (!e.target.closest('#inline-feedback-popup')) {
+                        hideInlinePopup();
+                    }
+                }, 50);
+            });
+        }
+
+        function switchToInlineComment(e) {
+            if (e) e.stopPropagation();
+            document.getElementById('inline-action-menu').style.display = 'none';
+            document.getElementById('inline-comment-form').style.display = 'flex';
+            if (inlineInput) {
+                inlineInput.focus();
+                inlineInput.select();
+                const currentLeft = parseInt(inlinePopup.style.left || '0', 10);
+                inlinePopup.style.left = (currentLeft - 40) + 'px';
+            }
+        }
+
+        async function copyRawSelectionText(e) {
+            if (e) e.stopPropagation();
+            if (!inlineSelectedText) return;
+            try {
+                await navigator.clipboard.writeText(inlineSelectedText);
+                showToast('/* TRANSLATE:inlineCopyBtn */ ✓');
+            } catch (err) {
+                showToast('Failed to copy text', true);
+            }
+            hideInlinePopup();
+            window.getSelection().removeAllRanges();
+        }
+
+        function hideInlinePopup() {
+            if (inlinePopup) {
+                inlinePopup.style.display = 'none';
+            }
+            if (inlineInput) {
+                inlineInput.value = '';
+            }
+            document.getElementById('inline-action-menu').style.display = 'flex';
+            document.getElementById('inline-comment-form').style.display = 'none';
+            inlineSelectedText = '';
+        }
+
+        function findCurrentSectionForNode(node) {
+            let parent = node;
+            while (parent && parent.id !== 'content') {
+                let sibling = parent.previousSibling;
+                while (sibling) {
+                    if (sibling.nodeType === 1 && /^H[1-6]$/i.test(sibling.tagName)) {
+                        return sibling.textContent.trim();
+                    }
+                    sibling = sibling.previousSibling;
+                }
+                parent = parent.parentNode;
+            }
+            return 'Document Body';
+        }
+
+        if (inlineInput) {
+            inlineInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    submitInlineFeedback();
+                    e.preventDefault();
+                } else if (e.key === 'Escape') {
+                    hideInlinePopup();
+                    window.getSelection().removeAllRanges();
+                }
+            });
+        }
+
+        async function submitInlineFeedback() {
+            const comment = inlineInput.value.trim();
+            if (!comment) return;
+
+            const feedbackData = {
+                file: currentDocFile,
+                section: inlineTargetSection,
+                comment: comment,
+                timestamp: new Date().toISOString()
+            };
+
+            let sentToServer = false;
+            try {
+                const response = await fetch('http://localhost:3000/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(feedbackData)
+                });
+                if (response.ok) sentToServer = true;
+            } catch (e) {}
+
+            let lineSuffix = '';
+            const selectedLines = getSelectedLines(inlineSelectedText);
+            if (selectedLines) {
+                lineSuffix = `:${selectedLines}`;
+            } else {
+                const sectionLine = getSectionLine(inlineTargetSection);
+                if (sectionLine) {
+                    lineSuffix = `:${sectionLine}`;
+                }
+            }
+
+            const lang = document.documentElement.getAttribute('lang') || 'en';
+            const promptText = lang === 'vi'
+                ? `hãy sửa phần "${inlineTargetSection}": "${comment}"`
+                : `please edit section "${inlineTargetSection}": "${comment}"`;
+            const formattedPrompt = `@[${currentDocAbsPath}${lineSuffix}] ${promptText}`;
+
+            try {
+                await navigator.clipboard.writeText(formattedPrompt);
+                let message = '/* TRANSLATE:inlineCopySuccess */';
+                if (sentToServer) {
+                    message += ' (Watcher server active)';
+                }
+                showToast(message);
+            } catch (err) {
+                showToast('/* TRANSLATE:alertError */', true);
+            }
+
+            hideInlinePopup();
+            window.getSelection().removeAllRanges();
+        }
+
+        function setupCodeBlockCopyButtons() {
+            const preElements = document.querySelectorAll('pre');
+            preElements.forEach(pre => {
+                if (pre.querySelector('.copy-code-btn')) return;
+                
+                const btn = document.createElement('button');
+                btn.className = 'copy-code-btn';
+                btn.innerHTML = '<i data-lucide="copy"></i>';
+                btn.title = 'Copy code';
+                
+                btn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const code = pre.querySelector('code');
+                    const textToCopy = code ? code.innerText : pre.innerText;
+                    
+                    try {
+                        await navigator.clipboard.writeText(textToCopy);
+                        btn.innerHTML = '<i data-lucide="check"></i>';
+                        btn.classList.add('copied');
+                        showToast('Code copied!');
+                        lucide.createIcons();
+                        
+                        setTimeout(() => {
+                            btn.innerHTML = '<i data-lucide="copy"></i>';
+                            btn.classList.remove('copied');
+                            lucide.createIcons();
+                        }, 2000);
+                    } catch (err) {
+                        showToast('Failed to copy code', true);
+                    }
+                });
+                pre.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        // Breadcrumbs setup
+        function renderBreadcrumbs() {
+            const container = document.getElementById('breadcrumbs-container');
+            if (!container) return;
+            
+            const parts = currentDocFile.split('/');
+            let html = '<span class="folder" style="font-size: 11px;"><i data-lucide="folder-open"></i></span><span class="separator"><i data-lucide="chevron-right"></i></span>';
+            
+            // Skip the language directory (vi or en) at the beginning to match only functional project directories
+            let startIndex = 0;
+            if (parts[0] === 'vi' || parts[0] === 'en') {
+                startIndex = 1;
+            }
+            
+            for (let i = startIndex; i < parts.length; i++) {
+                const part = parts[i];
+                if (!part) continue;
+                
+                const isLast = (i === parts.length - 1);
+                const cleanName = part.endsWith('.md') ? part.substring(0, part.length - 3) : part;
+                
+                if (isLast) {
+                    html += `<span class="current">${cleanName}</span>`;
+                } else {
+                    html += `<span class="folder">${cleanName}</span><span class="separator"><i data-lucide="chevron-right"></i></span>`;
+                }
+            }
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // Metadata Accordion control
+        function toggleMetadataDropdown() {
+            const dropdown = document.getElementById('metadata-dropdown');
+            const chevron = document.getElementById('metadata-chevron');
+            if (!dropdown || !chevron) return;
+            const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
+            dropdown.style.display = isHidden ? 'flex' : 'none';
+            chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        // TOC Accordion control
+        function toggleTocDropdown() {
+            const dropdown = document.getElementById('toc-dropdown');
+            const chevron = document.getElementById('toc-chevron');
+            if (!dropdown || !chevron) return;
+            const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
+            dropdown.style.display = isHidden ? 'flex' : 'none';
+            chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        // AI Prompts Suggestions control
+        function toggleAiPromptsDropdown() {
+            const dropdown = document.getElementById('ai-prompts-dropdown');
+            const chevron = document.getElementById('ai-prompts-chevron');
+            if (!dropdown || !chevron) return;
+            const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
+            dropdown.style.display = isHidden ? 'flex' : 'none';
+            chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        // Drift Audit Accordion control
+        function toggleDriftAuditDropdown() {
+            const dropdown = document.getElementById('drift-audit-dropdown');
+            const chevron = document.getElementById('drift-audit-chevron');
+            if (!dropdown || !chevron) return;
+            const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
+            dropdown.style.display = isHidden ? 'flex' : 'none';
+            chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        async function copyAiPrompt(type) {
+            const path = currentDocAbsPath;
+            const docLang = '/* WORKSPACE_LANG */';
+            const promptsVi = {
+                'frontmatter': `Hãy chuẩn hóa cấu trúc và dữ liệu frontmatter cho tệp tài liệu này: @[${path}]`,
+                'drift-audit': `Dưới đây là báo cáo sai lệch (drift audit) chi tiết của tài liệu @[${path}]. Hãy rà soát báo cáo này, phân tích mã nguồn thực tế và tài liệu mô tả để phát hiện nguyên nhân, sau đó khắc phục toàn bộ các sai lệch (gồm neo liên kết hỏng, tệp mồ côi, hoặc khoảng trống logic giữa tài liệu và code).
+
+Yêu cầu cụ thể:
+1. Đọc và phân tích kỹ từng lỗi/cảnh báo trong danh sách chi tiết dưới đây.
+2. Đối chiếu mã nguồn thực tế (không được sửa code/comment trong file code trừ khi được yêu cầu rõ ràng) và cập nhật tài liệu spec/tài liệu hướng dẫn tại @[${path}] để đồng bộ 100% với code.
+3. Giải quyết dứt điểm các neo bị hỏng bằng cách sửa/thêm các tiêu đề tương ứng trong file tài liệu hoặc cập nhật các neo liên kết.
+
+Chi tiết báo cáo sai lệch phát hiện được (Drift Audit Details):
+/* AUDIT_DETAILS_PLACEHOLDER */`,
+                'review': `Hãy rà soát toàn diện và cập nhật tài liệu @[${path}] để đảm bảo phản ánh chính xác 100% cấu trúc và logic mã nguồn thực tế. Đối chiếu mã nguồn và bổ sung bất kỳ phần giải thích hoặc thực thể code nào bị thiếu.`,
+                'review-structure': `Hãy phân tích cấu trúc hệ thống tài liệu hiện tại của dự án này từ tệp @[${path}] (và thư mục docs/), kiểm tra sự phân bổ giữa các thư mục specs, architecture, reference, guides, và đề xuất tối ưu hóa cấu trúc để loại bỏ thông tin dư thừa hoặc bổ sung các tài liệu bị thiếu.`,
+                'strategy': `Hãy đối chiếu định hướng phát triển hiện tại trong strategy.md và strategy-documentation.md (hoặc các file tài liệu chiến lược liên quan) của dự án này từ tệp @[${path}], đối chiếu với roadmap và backlog hiện tại để cập nhật/xây dựng lại tài liệu chiến lược cho phù hợp với tầm nhìn sản phẩm.`,
+                'headings': `Hãy rà soát toàn bộ tệp tài liệu @[${path}] và chuẩn hóa lại việc đánh số thứ tự trong các tiêu đề (h1, h2, h3...). Phát hiện các lỗi đánh số không tuần tự (như nhảy số, thiếu phân mục), chuẩn hóa chúng theo định dạng phân cấp tuần tự (ví dụ: 1., 1.1, 1.1.1, 2., 2.1...) và cập nhật lại toàn bộ các liên kết neo nội bộ liên quan. BẮT BUỘC rà soát thêm toàn bộ mã nguồn của dự án để tìm và cập nhật tất cả các comment tham chiếu (như // @para-doc [tên_file.md#neo]) trỏ đến các tiêu đề vừa thay đổi để tránh bị sai lệch thông tin.`
+            };
+            const promptsEn = {
+                'frontmatter': `Please normalize the frontmatter structure and metadata for this document: @[${path}]`,
+                'drift-audit': `Below is the detailed drift audit report for document @[${path}]. Please review this report, analyze the actual codebase implementation and documentation, identify the root causes, and fix all drift issues (including broken anchor links, orphan files, or logic gaps between documentation and code).
+
+Specific Requirements:
+1. Carefully read and analyze each error/warning in the detailed list below.
+2. Cross-reference with the actual source code (do NOT modify code/comments in source files directly unless explicitly requested) and update the documentation at @[${path}] to ensure 100% alignment with the code.
+3. Completely resolve broken anchors by fixing or adding corresponding headers/sections in the documentation or updating the anchor references.
+
+Drift Audit Details:
+/* AUDIT_DETAILS_PLACEHOLDER */`,
+                'review': `Please comprehensively review and update the document @[${path}] to ensure it accurately reflects 100% of the actual codebase structure and logic. Check the relevant source files and add any missing explanations or code entities.`,
+                'review-structure': `Please analyze the current documentation structure of this project starting from @[${path}] (and the docs/ directory), verify the distribution among specs, architecture, reference, guides, and propose structural optimizations to eliminate redundancy or add missing docs.`,
+                'strategy': `Please cross-reference the strategic direction in strategy.md and strategy-documentation.md (or related strategy docs) from @[${path}] against the roadmap and backlog to update or rebuild the strategy documentation to align with the product vision.`,
+                'headings': `Please review the document @[${path}] and normalize the heading numbering structure (h1, h2, h3...). Find non-sequential numbering issues (e.g. skipped numbers, missing subsections), normalize them to a sequential hierarchy (e.g. 1., 1.1, 1.1.1, 2., 2.1...), and update all corresponding internal anchor links. You MUST also scan the codebase and update any matching reference comments (e.g. // @para-doc [filename.md#anchor]) to prevent broken links.`
+            };
+            const promptText = (docLang === 'vi') ? promptsVi[type] : promptsEn[type];
+            if (!promptText) return;
+            
+            try {
+                await navigator.clipboard.writeText(promptText);
+                showToast('/* TRANSLATE:toastPromptCopied */');
+            } catch (err) {
+                showToast('Failed to copy prompt', true);
+            }
+        }
+
+        renderMarkdown();
+        renderBreadcrumbs();
+    </script>
+</body>
+</html>

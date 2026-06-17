@@ -1,0 +1,14 @@
+{
+  "name": "game-hamburger-catcher",
+  "version": "0.1.0",
+  "description": "Hamburger Catcher - An arcade game of catching hamburgers and upgrades while avoiding traps and hazards.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
